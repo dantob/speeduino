@@ -10,7 +10,7 @@
 
 void doUpdates()
 {
-  #define CURRENT_DATA_VERSION    17
+  #define CURRENT_DATA_VERSION    18
 
   //May 2017 firmware introduced a -40 offset on the ignition table. Update that table to +40
   if(EEPROM.read(EEPROM_DATA_VERSION) == 2)
@@ -443,6 +443,7 @@ void doUpdates()
 
   if(EEPROM.read(EEPROM_DATA_VERSION) == 16)
   {
+    //202103
     //Fix for wrong placed page 13
     for(int x=EEPROM_CONFIG14_END; x>=EEPROM_CONFIG13_START; x--)
     {
@@ -455,7 +456,17 @@ void doUpdates()
     writeAllConfig();
     EEPROM.write(EEPROM_DATA_VERSION, 17);
   }
-  
+
+if(EEPROM.read(EEPROM_DATA_VERSION) == 17)
+  {
+    //2021XX current development release
+    //disable coolant temp protection by default
+    configPage10.coolantProtEnbl = false;
+
+    writeAllConfig();
+    EEPROM.write(EEPROM_DATA_VERSION, 18);
+  }
+
   //Final check is always for 255 and 0 (Brand new arduino)
   if( (EEPROM.read(EEPROM_DATA_VERSION) == 0) || (EEPROM.read(EEPROM_DATA_VERSION) == 255) )
   {
