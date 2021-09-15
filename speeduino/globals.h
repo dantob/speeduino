@@ -722,88 +722,94 @@ struct statuses {
 struct config2 {
 
   byte aseTaperTime;
-  byte aeColdPct;  //AE cold clt modifier %
-  byte aeColdTaperMin; //AE cold modifier, taper start temp (full modifier, was ASE in early versions)
-  byte aeMode : 2;      /**< Acceleration Enrichment mode. 0 = TPS, 1 = MAP. Values 2 and 3 reserved for potential future use (ie blended TPS / MAP) */
-  byte battVCorMode : 1;
+  byte aeColdPct;            //AE cold clt modifier %
+  byte aeColdTaperMin;       //AE cold modifier, taper start temp (full modifier, was ASE in early versions)
+
+  byte aeMode        : 2;     /**< Acceleration Enrichment mode. 0 = TPS, 1 = MAP. Values 2 and 3 reserved for potential future use (ie blended TPS / MAP) */
+  byte battVCorMode  : 1;
   byte SoftLimitMode : 1;
   byte useTachoSweep : 1;
-  byte aeApplyMode : 1; ///< Acceleration enrichment calc mode: 0 = Multiply | 1 = Add (AE_MODE_ADDER)
-  byte multiplyMAP : 2; ///< MAP value processing: 0 = off, 1 = div by currentStatus.baro, 2 = div by 100 (to gain usable value)
-  byte wueValues[10];   ///< Warm up enrichment array (10 bytes, transferred to @ref WUETable)
-  byte crankingPct;     ///< Cranking enrichment (See @ref config10, updates.ino)
-  byte pinMapping;      ///< The board / ping mapping number / id to be used (See: @ref setPinMapping in init.ino)
-  byte tachoPin : 6;    ///< Custom pin setting for tacho output (if != 0, override copied to pinTachOut, which defaults to board assigned tach pin)
-  byte tachoDiv : 2;    ///< Whether to change the tacho speed ("half speed tacho" ?)
-  byte tachoDuration;   //The duration of the tacho pulse in mS
-  byte maeThresh;       /**< The MAPdot threshold that must be exceeded before AE is engaged */
-  byte taeThresh;       /**< The TPSdot threshold that must be exceeded before AE is engaged */
+  byte aeApplyMode   : 1;    ///< Acceleration enrichment calc mode: 0 = Multiply | 1 = Add (AE_MODE_ADDER)
+  byte multiplyMAP   : 2;    ///< MAP value processing: 0 = off, 1 = div by currentStatus.baro, 2 = div by 100 (to gain usable value)
+
+  byte wueValues[10];        ///< Warm up enrichment array (10 bytes, transferred to @ref WUETable)
+  byte crankingPct;          ///< Cranking enrichment (See @ref config10, updates.ino)
+  byte pinMapping;           ///< The board / ping mapping number / id to be used (See: @ref setPinMapping in init.ino)
+
+  byte tachoPin : 6;         ///< Custom pin setting for tacho output (if != 0, override copied to pinTachOut, which defaults to board assigned tach pin)
+  byte tachoDiv : 2;         ///< Whether to change the tacho speed ("half speed tacho" ?)
+
+  byte tachoDuration;        //The duration of the tacho pulse in mS
+  byte maeThresh;            /**< The MAPdot threshold that must be exceeded before AE is engaged */
+  byte taeThresh;            /**< The TPSdot threshold that must be exceeded before AE is engaged */
   byte aeTime;
 
   //Display config bits
-  byte displayType : 3; //21
-  byte display1 : 3;
-  byte display2 : 2;
+  byte displayType : 3;      //21
+  byte display1    : 3;
+  byte display2    : 2;
 
-  byte display3 : 3;    //22
-  byte display4 : 2;
-  byte display5 : 3;
+  byte display3    : 3;      //22
+  byte display4    : 2;
+  byte display5    : 3;
 
-  byte displayB1 : 4;   //23
-  byte displayB2 : 4;
+  byte displayB1   : 4;      //23
+  byte displayB2   : 4;
 
-  byte reqFuel;       //24
+  byte reqFuel;              //24
   byte divider;
-  byte injTiming : 1; ///< Injector timing (aka. injector staging) 0=simultaneous, 1=alternating
+
+  byte injTiming       : 1;  ///< Injector timing (aka. injector staging) 0=simultaneous, 1=alternating
   byte multiplyMAP_old : 1;
-  byte includeAFR : 1; //< Enable AFR compensation ? (See also @ref config2.incorporateAFR)
-  byte hardCutType : 1;
-  byte ignAlgorithm : 3;
-  byte indInjAng : 1;
-  byte injOpen;     ///< Injector opening time (ms * 10)
+  byte includeAFR      : 1;  //< Enable AFR compensation ? (See also @ref config2.incorporateAFR)
+  byte hardCutType     : 1;
+  byte ignAlgorithm    : 3;
+  byte indInjAng       : 1;
+
+  byte injOpen;              ///< Injector opening time (ms * 10)
   uint16_t injAng[4];
 
   //config1 in ini
-  byte mapSample : 2;  ///< MAP sampling method (0=Instantaneous, 1=Cycle Average, 2=Cycle Minimum, 4=Ign. event average, See sensors.ino)
-  byte strokes : 1;    ///< Engine cycle type: four-stroke (0) / two-stroke (1)
-  byte injType : 1;    ///< Injector type 0=Port (INJ_TYPE_PORT), 1=Throttle Body / TBI (INJ_TYPE_TBODY)
-  byte nCylinders : 4; ///< Number of cylinders
+  byte mapSample  : 2;       ///< MAP sampling method (0=Instantaneous, 1=Cycle Average, 2=Cycle Minimum, 4=Ign. event average, See sensors.ino)
+  byte strokes    : 1;       ///< Engine cycle type: four-stroke (0) / two-stroke (1)
+  byte injType    : 1;       ///< Injector type 0=Port (INJ_TYPE_PORT), 1=Throttle Body / TBI (INJ_TYPE_TBODY)
+  byte nCylinders : 4;       ///< Number of cylinders
 
   //config2 in ini
-  byte fuelAlgorithm : 3;///< Fuel algorithm - 0=Manifold pressure/MAP (LOAD_SOURCE_MAP, default, proven), 1=Throttle/TPS (LOAD_SOURCE_TPS), 2=IMAP/EMAP (LOAD_SOURCE_IMAPEMAP)
-  byte fixAngEnable : 1; ///< Whether fixed/locked timing is enabled (0=diable, 1=enable, See @ref configPage4.FixAng)
-  byte nInjectors : 4;   ///< Number of injectors
+  byte fuelAlgorithm : 3;    ///< Fuel algorithm - 0=Manifold pressure/MAP (LOAD_SOURCE_MAP, default, proven), 1=Throttle/TPS (LOAD_SOURCE_TPS), 2=IMAP/EMAP (LOAD_SOURCE_IMAPEMAP)
+  byte fixAngEnable  : 1;    ///< Whether fixed/locked timing is enabled (0=diable, 1=enable, See @ref configPage4.FixAng)
+  byte nInjectors    : 4;    ///< Number of injectors
 
 
   //config3 in ini
-  byte engineType : 1;  ///< Engine crank/ign phasing type: 0=even fire, 1=odd fire
-  byte flexEnabled : 1; ///< Enable Flex fuel sensing (pin / interrupt)
-  byte legacyMAP  : 1;  ///< Legacy MAP reading behavior
-  byte baroCorr : 1;    // Unused ?
-  byte injLayout : 2;   /**< Injector Layout - 0=INJ_PAIRED (#outputs == #cyls/2, timed over 1 crank rev), 1=INJ_SEMISEQUENTIAL (like paired, but #outputs == #cyls, only for 4 cyl),
-                         2=INJ_BANKED (2 outputs are used), 3=INJ_SEQUENTIAL (#ouputs == #cyls, timed over full cycle, 2 crank revs) */
-  byte perToothIgn : 1; ///< Experimental / New ign. mode ... (?) (See decoders.ino)
-  byte dfcoEnabled : 1; ///< Whether or not DFCO (deceleration fuel cut-off) is turned on
+  byte engineType  : 1;      ///< Engine crank/ign phasing type: 0=even fire, 1=odd fire
+  byte flexEnabled : 1;      ///< Enable Flex fuel sensing (pin / interrupt)
+  byte legacyMAP   : 1;      ///< Legacy MAP reading behavior
+  byte baroCorr    : 1;
+  byte injLayout   : 2;      /**< Injector Layout - 0=INJ_PAIRED (#outputs == #cyls/2, timed over 1 crank rev), 1=INJ_SEMISEQUENTIAL (like paired, but #outputs == #cyls, only for 4 cyl),
+                                  2=INJ_BANKED (2 outputs are used), 3=INJ_SEQUENTIAL (#ouputs == #cyls, timed over full cycle, 2 crank revs) */
+  byte perToothIgn : 1;      ///< Experimental / New ign. mode ... (?) (See decoders.ino)
+  byte dfcoEnabled : 1;      ///< Whether or not DFCO (deceleration fuel cut-off) is turned on
 
-  byte aeColdTaperMax;  ///< AE cold modifier, taper end temp (no modifier applied, was primePulse in early versions)
+  byte aeColdTaperMax;       ///< AE cold modifier, taper end temp (no modifier applied, was primePulse in early versions)
   byte dutyLim;
-  byte flexFreqLow; //Lowest valid frequency reading from the flex sensor
-  byte flexFreqHigh; //Highest valid frequency reading from the flex sensor
+  byte flexFreqLow;          //Lowest valid frequency reading from the flex sensor
+  byte flexFreqHigh;         //Highest valid frequency reading from the flex sensor
 
   byte boostMaxDuty;
   byte tpsMin;
   byte tpsMax;
-  int8_t mapMin; //Must be signed
+  int8_t mapMin;             //Must be signed
   uint16_t mapMax;
-  byte fpPrime; ///< Time (In seconds) that the fuel pump should be primed for on power up
-  byte stoich;  ///< Stoichiometric ratio (x10, so e.g. 14.7 => 147)
-  uint16_t oddfire2; ///< The ATDC angle of channel 2 for oddfire
-  uint16_t oddfire3; ///< The ATDC angle of channel 3 for oddfire
-  uint16_t oddfire4; ///< The ATDC angle of channel 4 for oddfire
+  byte fpPrime;              ///< Time (In seconds) that the fuel pump should be primed for on power up
+  byte stoich;               ///< Stoichiometric ratio (x10, so e.g. 14.7 => 147)
+  uint16_t oddfire2;         ///< The ATDC angle of channel 2 for oddfire
+  uint16_t oddfire3;         ///< The ATDC angle of channel 3 for oddfire
+  uint16_t oddfire4;         ///< The ATDC angle of channel 4 for oddfire
 
-  byte idleUpPin : 6;
+  byte idleUpPin      : 6;
   byte idleUpPolarity : 1;
-  byte idleUpEnabled : 1;
+  byte idleUpEnabled  : 1;
 
   byte idleUpAdder;
   byte aeTaperMin;
@@ -813,46 +819,44 @@ struct config2 {
   byte iacCLmaxDuty;
   byte boostMinDuty;
 
-  int8_t baroMin; //Must be signed
+  int8_t baroMin;            //Must be signed
   uint16_t baroMax;
-
-  int8_t EMAPMin; //Must be signed
+  int8_t EMAPMin;            //Must be signed
   uint16_t EMAPMax;
 
-  byte fanWhenOff : 1;      ///< Allow running fan with engine off: 0 = Only run fan when engine is running, 1 = Allow even with engine off
-  byte fanWhenCranking : 1; ///< Set whether the fan output will stay on when the engine is cranking (0=force off, 1=allow on)
-  byte useDwellMap : 1;     ///< Setting to change between fixed dwell value and dwell map (0=Fixed value from @ref configPage4.dwellRun, 1=Use @ref dwellTable)
-  byte fanUnused : 2;       // Unused ?
-  byte rtc_mode : 2;        // Unused ?
-  byte incorporateAFR : 1;  ///< Enable AFR target (stoich/afrtgt) compensation in PW calculation
-  byte asePct[4];           ///< Afterstart enrichment values (%)
-  byte aseCount[4];         ///< Afterstart enrichment cycles. This is the number of ignition cycles that the afterstart enrichment % lasts for
-  byte aseBins[4];          ///< Afterstart enrichment temperatures (x-axis) for (target) enrichment values
-  byte primePulse[4];//Priming pulsewidth values (mS, copied to @ref PrimingPulseTable)
-  byte primeBins[4]; //Priming temperatures (source,x-axis)
+  byte fanWhenOff      : 1;  ///< Allow running fan with engine off: 0 = Only run fan when engine is running, 1 = Allow even with engine off
+  byte fanWhenCranking : 1;  ///< Set whether the fan output will stay on when the engine is cranking (0=force off, 1=allow on)
+  byte useDwellMap     : 1;  ///< Setting to change between fixed dwell value and dwell map (0=Fixed value from @ref configPage4.dwellRun, 1=Use @ref dwellTable)
+  byte unusedBits2_70  : 2;
+  byte rtc_mode        : 2;
+  byte incorporateAFR  : 1;  ///< Enable AFR target (stoich/afrtgt) compensation in PW calculation
 
-  byte CTPSPin : 6;
+  byte asePct[4];            ///< Afterstart enrichment values (%)
+  byte aseCount[4];          ///< Afterstart enrichment cycles. This is the number of ignition cycles that the afterstart enrichment % lasts for
+  byte aseBins[4];           ///< Afterstart enrichment temperatures (x-axis) for (target) enrichment values
+  byte primePulse[4];        //Priming pulsewidth values (mS, copied to @ref PrimingPulseTable)
+  byte primeBins[4];         //Priming temperatures (source,x-axis)
+
+  byte CTPSPin      : 6;
   byte CTPSPolarity : 1;
-  byte CTPSEnabled : 1;
+  byte CTPSEnabled  : 1;
 
-  byte idleAdvEnabled : 2;
+  byte idleAdvEnabled   : 2;
   byte idleAdvAlgorithm : 1;
-  byte IdleAdvDelay : 5;
-  
+  byte IdleAdvDelay     : 5;
+
   byte idleAdvRPM;
   byte idleAdvTPS;
-
   byte injAngRPM[4];
-
   byte idleTaperTime;
   byte dfcoDelay;
   byte dfcoMinCLT;
 
   //VSS Stuff
-  byte vssMode : 2; ///< VSS (Vehicle speed sensor) mode (0=none, 1=CANbus, 2,3=Interrupt driven)
-  byte vssPin : 6; ///< VSS (Vehicle speed sensor) pin number
-  
-  uint16_t vssPulsesPerKm; ///< VSS (Vehicle speed sensor) pulses per Km
+  byte vssMode : 2;          ///< VSS (Vehicle speed sensor) mode (0=none, 1=CANbus, 2,3=Interrupt driven)
+  byte vssPin  : 6;          ///< VSS (Vehicle speed sensor) pin number
+
+  uint16_t vssPulsesPerKm;   ///< VSS (Vehicle speed sensor) pulses per Km
   byte vssSmoothing;
   uint16_t vssRatio1;
   uint16_t vssRatio2;
@@ -862,8 +866,8 @@ struct config2 {
   uint16_t vssRatio6;
 
   byte idleUpOutputEnabled : 1;
-  byte idleUpOutputInv : 1;
-  byte idleUpOutputPin  : 6;
+  byte idleUpOutputInv     : 1;
+  byte idleUpOutputPin     : 6;
 
   byte tachoSweepMaxRPM;
   byte primingDelay;
@@ -875,7 +879,8 @@ struct config2 {
   byte idleAdvVss;
   byte mapSwitchPoint;
 
-  byte unused2_95[2];
+  byte unused2_126;
+  byte unused2_127;
 
 #if defined(CORE_AVR)
   };
@@ -888,53 +893,62 @@ struct config2 {
 */
 struct config4 {
 
-  int16_t triggerAngle; ///< Angle (ATDC) when tooth No:1 on the primary wheel sends signal (-360 to +360 deg.)
-  int8_t FixAng; ///< Fixed Ignition angle value (enabled by @ref configPage2.fixAngEnable, copied to ignFixValue, Negative values allowed, See corrections.ino)
-  byte CrankAng; ///< Fixed start-up/cranking ignition angle (See: corrections.ino)
-  byte TrigAngMul; ///< Multiplier for non evenly divisible tooth counts.
+  int16_t triggerAngle;      ///< Angle (ATDC) when tooth No:1 on the primary wheel sends signal (-360 to +360 deg.)
+  int8_t FixAng;             ///< Fixed Ignition angle value (enabled by @ref configPage2.fixAngEnable, copied to ignFixValue, Negative values allowed, See corrections.ino)
+  byte CrankAng;             ///< Fixed start-up/cranking ignition angle (See: corrections.ino)
+  byte TrigAngMul;           ///< Multiplier for non evenly divisible tooth counts.
 
-  byte TrigEdge : 1;  ///< Primary (RPM1) Trigger Edge - 0 - RISING, 1 = FALLING (Copied from this config to primaryTriggerEdge)
-  byte TrigSpeed : 1; ///< Primary (RPM1) Trigger speed - 0 = crank speed (CRANK_SPEED), 1 = cam speed (CAM_SPEED), See decoders.ino
-  byte IgInv : 1;     ///< Ignition signal invert (?) (GOING_LOW=0 (default by init.ino) / GOING_HIGH=1 )
-  byte TrigPattern : 5; ///< Decoder configured (DECODER_MISSING_TOOTH, DECODER_BASIC_DISTRIBUTOR, DECODER_GM7X, ... See init.ino)
+  byte TrigEdge    : 1;      ///< Primary (RPM1) Trigger Edge - 0 - RISING, 1 = FALLING (Copied from this config to primaryTriggerEdge)
+  byte TrigSpeed   : 1;      ///< Primary (RPM1) Trigger speed - 0 = crank speed (CRANK_SPEED), 1 = cam speed (CAM_SPEED), See decoders.ino
+  byte IgInv       : 1;      ///< Ignition signal invert (?) (GOING_LOW=0 (default by init.ino) / GOING_HIGH=1 )
+  byte TrigPattern : 5;      ///< Decoder configured (DECODER_MISSING_TOOTH, DECODER_BASIC_DISTRIBUTOR, DECODER_GM7X, ... See init.ino)
 
-  byte TrigEdgeSec : 1; ///< Secondary (RPM2) Trigger Edge (See RPM1)
-  byte fuelPumpPin : 6; ///< Fuel pump pin (copied as override to pinFuelPump, defaults to board default, See: init.ino)
-  byte useResync : 1;
+  byte TrigEdgeSec : 1;      ///< Secondary (RPM2) Trigger Edge (See RPM1)
+  byte fuelPumpPin : 6;      ///< Fuel pump pin (copied as override to pinFuelPump, defaults to board default, See: init.ino)
+  byte useResync   : 1;
 
-  byte sparkDur; ///< Spark duration in ms * 10
-  byte trigPatternSec : 7; ///< Mode for Missing tooth secondary trigger - 0=single tooth cam wheel (SEC_TRIGGER_SINGLE), 1=4-1 (SEC_TRIGGER_4_1) or 2=poll level mode (SEC_TRIGGER_POLL)
+  byte sparkDur;             ///< Spark duration in ms * 10
+  byte trigPatternSec   : 7; ///< Mode for Missing tooth secondary trigger - 0=single tooth cam wheel (SEC_TRIGGER_SINGLE), 1=4-1 (SEC_TRIGGER_4_1) or 2=poll level mode (SEC_TRIGGER_POLL)
   byte PollLevelPolarity : 1; //for poll level cam trigger. Sets if the cam trigger is supposed to be high or low for revolution one.
-  uint8_t bootloaderCaps; //Capabilities of the bootloader over stock. e.g., 0=Stock, 1=Reset protection, etc.
+
+  uint8_t bootloaderCaps;    //Capabilities of the bootloader over stock. e.g., 0=Stock, 1=Reset protection, etc.
 
   byte resetControlConfig : 2; /** Which method of reset control to use - 0=Disabled (RESET_CONTROL_DISABLED), 1=Prevent When Running (RESET_CONTROL_PREVENT_WHEN_RUNNING),
-     2=Prevent Always (RESET_CONTROL_PREVENT_ALWAYS), 3=Serial Command (RESET_CONTROL_SERIAL_COMMAND) - Copied to resetControl (See init.ino, utilities.ino) */
-  byte resetControlPin : 6;
+                                   2=Prevent Always (RESET_CONTROL_PREVENT_ALWAYS), 3=Serial Command (RESET_CONTROL_SERIAL_COMMAND) - Copied to resetControl (See init.ino, utilities.ino) */
+  byte resetControlPin    : 6;
 
-  byte StgCycles; //The number of initial cycles before the ignition should fire when first cranking
+  byte StgCycles;            //The number of initial cycles before the ignition should fire when first cranking
 
-  byte boostType : 1; ///< Boost Control type: 0=Open loop (OPEN_LOOP_BOOST), 1=closed loop (CLOSED_LOOP_BOOST)
-  byte useDwellLim : 1; //Whether the dwell limiter is off or on
-  byte sparkMode : 3; /** Ignition/Spark output mode - 0=Wasted spark (IGN_MODE_WASTED), 1=single channel (IGN_MODE_SINGLE),
-      2=Wasted COP (IGN_MODE_WASTEDCOP), 3=Sequential (IGN_MODE_SEQUENTIAL), 4=Rotary (IGN_MODE_ROTARY) */
-  byte triggerFilter : 2; //The mode of trigger filter being used (0=Off, 1=Light (Not currently used), 2=Normal, 3=Aggressive)
-  byte ignCranklock : 1; //Whether or not the ignition timing during cranking is locked to a CAS (crank) pulse. Only currently valid for Basic distributor and 4G63.
+  byte boostType     : 1;    ///< Boost Control type: 0=Open loop (OPEN_LOOP_BOOST), 1=closed loop (CLOSED_LOOP_BOOST)
+  byte useDwellLim   : 1;    //Whether the dwell limiter is off or on
+  byte sparkMode     : 3;    /** Ignition/Spark output mode - 0=Wasted spark (IGN_MODE_WASTED), 1=single channel (IGN_MODE_SINGLE),
+                                 2=Wasted COP (IGN_MODE_WASTEDCOP), 3=Sequential (IGN_MODE_SEQUENTIAL), 4=Rotary (IGN_MODE_ROTARY) */
+  byte triggerFilter : 2;    //The mode of trigger filter being used (0=Off, 1=Light (Not currently used), 2=Normal, 3=Aggressive)
+  byte ignCranklock  : 1;    //Whether or not the ignition timing during cranking is locked to a CAS (crank) pulse. Only currently valid for Basic distributor and 4G63.
 
-  byte dwellCrank;    ///< Dwell time whilst cranking
-  byte dwellRun;      ///< Dwell time whilst running
-  byte triggerTeeth;  ///< The full count of teeth on the trigger wheel if there were no gaps
-  byte triggerMissingTeeth; ///< The size of the tooth gap (ie number of missing teeth)
-  byte crankRPM;      ///< RPM below which the engine is considered to be cranking
-  byte floodClear;    ///< TPS (raw adc count? % ?) value that triggers flood clear mode (No fuel whilst cranking, See @ref correctionFloodClear())
-  byte SoftRevLim;    ///< Soft rev limit (RPM/100)
-  byte SoftLimRetard; ///< Amount soft limit (ignition) retard (degrees)
-  byte SoftLimMax;    ///< Time the soft limit can run (units ?)
-  byte HardRevLim;    ///< Hard rev limit (RPM/100)
-  byte taeBins[4];    ///< TPS based acceleration enrichment bins (Unit: %/s)
-  byte taeValues[4];  ///< TPS based acceleration enrichment rates (Unit: % to add), values matched to thresholds of taeBins
-  byte wueBins[10];   ///< Warmup Enrichment bins (Values are in @ref configPage2.wueValues OLD:configTable1)
+  byte dwellCrank;           ///< Dwell time whilst cranking
+  byte dwellRun;             ///< Dwell time whilst running
+  byte triggerTeeth;         ///< The full count of teeth on the trigger wheel if there were no gaps
+  byte triggerMissingTeeth;  ///< The size of the tooth gap (ie number of missing teeth)
+
+  byte crankRPM;             ///< RPM below which the engine is considered to be cranking
+  byte floodClear;           ///< TPS (raw adc count? % ?) value that triggers flood clear mode (No fuel whilst cranking, See @ref correctionFloodClear())
+
+  byte SoftRevLim;           ///< Soft rev limit (RPM/100)
+  byte SoftLimRetard;        ///< Amount soft limit (ignition) retard (degrees)
+  byte SoftLimMax;           ///< Time the soft limit can run (units ?)
+  byte HardRevLim;           ///< Hard rev limit (RPM/100)
+
+  byte taeBins[4];           ///< TPS based acceleration enrichment bins (Unit: %/s)
+  byte taeValues[4];         ///< TPS based acceleration enrichment rates (Unit: % to add), values matched to thresholds of taeBins
+
+  byte wueBins[10];          ///< Warmup Enrichment bins (Values are in @ref configPage2.wueValues OLD:configTable1)
+
   byte dwellLimit;
   byte dwellCorrectionValues[6]; ///< Correction table for dwell vs battery voltage
+
+//TODO:
+
   byte iatRetBins[6]; ///< Inlet Air Temp timing retard curve bins (Unit: ...)
   byte iatRetValues[6]; ///< Inlet Air Temp timing retard curve values (Unit: ...)
   byte dfcoRPM;       ///< RPM at which DFCO turns off/on at
