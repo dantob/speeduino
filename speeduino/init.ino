@@ -46,7 +46,7 @@
  * - Mark Initialization completed (this flag-marking is used in code to prevent after-init changes)
  */
 void initialiseAll()
-{   
+{
     fpPrimed = false;
     injPrimed = false;
 
@@ -76,14 +76,14 @@ void initialiseAll()
     configPage9.intcan_available = 1;   // device has internal canbus
     //STM32 can not currently enabled
     #endif
-    
+
     loadConfig();
     doUpdates(); //Check if any data items need updating (Occurs with firmware updates)
 
     //Always start with a clean slate on the bootloader capabilities level
     //This should be 0 until we hear otherwise from the 16u2
     configPage4.bootloaderCaps = 0;
-    
+
     initBoard(); //This calls the current individual boards init function. See the board_xxx.ino files for these.
     initialiseTimers();
   #ifdef SD_LOGGING
@@ -306,7 +306,7 @@ void initialiseAll()
     #if (INJ_CHANNELS >= 8)
     closeInjector8();
     #endif
-    
+
     //Set the tacho output default state
     digitalWrite(pinTachOut, HIGH);
     //Perform all initialisations
@@ -412,7 +412,7 @@ void initialiseAll()
     timer5_overflow_count = 0;
     toothHistoryIndex = 0;
     toothHistorySerialIndex = 0;
-    
+
     noInterrupts();
     initialiseTriggers();
 
@@ -429,10 +429,10 @@ void initialiseAll()
     mainLoopCount = 0;
 
     currentStatus.nSquirts = configPage2.nCylinders / configPage2.divider; //The number of squirts being requested. This is manaully overriden below for sequential setups (Due to TS req_fuel calc limitations)
-    if(currentStatus.nSquirts == 0) { currentStatus.nSquirts = 1; } //Safety check. Should never happen as TS will give an error, but leave incase tune is manually altered etc. 
+    if(currentStatus.nSquirts == 0) { currentStatus.nSquirts = 1; } //Safety check. Should never happen as TS will give an error, but leave incase tune is manually altered etc.
 
     //Calculate the number of degrees between cylinders
-    //Swet some default values. These will be updated below if required. 
+    //Set some default values. These will be updated below if required.
     CRANK_ANGLE_MAX = 720;
     CRANK_ANGLE_MAX_IGN = 360;
     CRANK_ANGLE_MAX_INJ = 360;
@@ -463,7 +463,7 @@ void initialiseAll()
         channel1InjDegrees = 0;
         maxIgnOutputs = 1;
 
-        //Sequential ignition works identically on a 1 cylinder whether it's odd or even fire. 
+        //Sequential ignition works identically on a 1 cylinder whether it's odd or even fire.
         if( (configPage4.sparkMode == IGN_MODE_SEQUENTIAL) && (configPage2.strokes == FOUR_STROKE) ) { CRANK_ANGLE_MAX_IGN = 720; }
 
         if ( (configPage2.injLayout == INJ_SEQUENTIAL) && (configPage2.strokes == FOUR_STROKE) )
@@ -487,26 +487,37 @@ void initialiseAll()
         channel1IgnDegrees = 0;
         channel1InjDegrees = 0;
         maxIgnOutputs = 2;
-        if (configPage2.engineType == EVEN_FIRE ) { channel2IgnDegrees = 180; }
-        else { channel2IgnDegrees = configPage2.oddfire2; }
 
-        //Sequential ignition works identically on a 2 cylinder whether it's odd or even fire (With the default being a 180 degree second cylinder). 
-        if( (configPage4.sparkMode == IGN_MODE_SEQUENTIAL) && (configPage2.strokes == FOUR_STROKE) ) { CRANK_ANGLE_MAX_IGN = 720; }
-
-        if ( (configPage2.injLayout == INJ_SEQUENTIAL) && (configPage2.strokes == FOUR_STROKE) )
+        if (configPage2.engineType == EVEN_FIRE )
         {
-          CRANK_ANGLE_MAX_INJ = 720;
-          currentStatus.nSquirts = 1;
-          req_fuel_uS = req_fuel_uS * 2;
-        }
-        //The below are true regardless of whether this is running sequential or not
-        if (configPage2.engineType == EVEN_FIRE ) { channel2InjDegrees = 180; }
-        else { channel2InjDegrees = configPage2.oddfire2; }
-        if (!configPage2.injTiming) 
+          if( (configPage4.sparkMode == IGN_MODE_SEQUENTIAL) && (configPage2.strokes == FOUR_STROKE) )
+          {
+            channel2IgnDegrees = 360;
+            CRANK_ANGLE_MAX_IGN = 720
+            maxIgnOutputs = 2;
+          }
+          else { channel2IgnDegrees = 180; }
+
+          if ( (configPage2.injLayout == INJ_SEQUENTIAL) && (configPage2.strokes == FOUR_STROKE) )
+          {
+            channel2InjDegrees = 360;
+            CRANK_ANGLE_MAX_INJ = 720;
+            currentStatus.nSquirts = 1;
+            req_fuel_uS = req_fuel_uS * 2;
+           }
+           else { channel2InjDegrees = 180; }
+         {
+         else
+         {
+          //missing sequential oddfire case
+          channel2IgnDegrees = configPage2.oddfire2;
+          channel2InjDegrees = configPage2.oddfire2;
+         }
+
+        if (!configPage2.injTiming)
         { 
           //For simultaneous, all squirts happen at the same time
-          channel1InjDegrees = 0;
-          channel2InjDegrees = 0; 
+          channel2InjDegrees = 0;
         }
 
         channel1InjEnabled = true;
@@ -521,38 +532,37 @@ void initialiseAll()
           channel3InjDegrees = channel1InjDegrees;
           channel4InjDegrees = channel2InjDegrees;
         }
-
         break;
 
     case 3:
         channel1IgnDegrees = 0;
+        channel1InjDegrees = 0;
         maxIgnOutputs = 3;
+
         if (configPage2.engineType == EVEN_FIRE )
         {
-        //Sequential and Single channel modes both run over 720 crank degrees, but only on 4 stroke engines. 
-        if( ( (configPage4.sparkMode == IGN_MODE_SEQUENTIAL) || (configPage4.sparkMode == IGN_MODE_SINGLE) ) && (configPage2.strokes == FOUR_STROKE) )
-        {
-          channel2IgnDegrees = 240;
-          channel3IgnDegrees = 480;
-
-          CRANK_ANGLE_MAX_IGN = 720;
+          //Sequential and Single channel modes both run over 720 crank degrees, but only on 4 stroke engines. 
+          if( ( (configPage4.sparkMode == IGN_MODE_SEQUENTIAL) || (configPage4.sparkMode == IGN_MODE_SINGLE) ) && (configPage2.strokes == FOUR_STROKE) )
+          {
+            channel2IgnDegrees = 240;
+            channel3IgnDegrees = 480;
+            CRANK_ANGLE_MAX_IGN = 720;
+          }
+          else
+          {
+            channel2IgnDegrees = 120;
+            channel3IgnDegrees = 240;
+          }
         }
         else
         {
-          channel2IgnDegrees = 120;
-          channel3IgnDegrees = 240;
-        }
-        }
-        else
-        {
-        channel2IgnDegrees = configPage2.oddfire2;
-        channel3IgnDegrees = configPage2.oddfire3;
+          channel2IgnDegrees = configPage2.oddfire2;
+          channel3IgnDegrees = configPage2.oddfire3;
         }
 
         //For alternating injection, the squirt occurs at different times for each channel
         if( (configPage2.injLayout == INJ_SEMISEQUENTIAL) || (configPage2.injLayout == INJ_PAIRED) || (configPage2.strokes == TWO_STROKE) )
         {
-          channel1InjDegrees = 0;
           channel2InjDegrees = 120;
           channel3InjDegrees = 240;
 
@@ -563,17 +573,15 @@ void initialiseAll()
             channel3InjDegrees = (channel3InjDegrees * 2) / currentStatus.nSquirts;
           }
 
-          if (!configPage2.injTiming) 
-          { 
+          if (!configPage2.injTiming)
+          {
             //For simultaneous, all squirts happen at the same time
-            channel1InjDegrees = 0;
             channel2InjDegrees = 0;
-            channel3InjDegrees = 0; 
-          } 
+            channel3InjDegrees = 0;
+          }
         }
         else if (configPage2.injLayout == INJ_SEQUENTIAL)
         {
-          channel1InjDegrees = 0;
           channel2InjDegrees = 240;
           channel3InjDegrees = 480;
           CRANK_ANGLE_MAX_INJ = 720;
@@ -585,10 +593,12 @@ void initialiseAll()
         channel2InjEnabled = true;
         channel3InjEnabled = true;
         break;
+
     case 4:
         channel1IgnDegrees = 0;
         channel1InjDegrees = 0;
         maxIgnOutputs = 2; //Default value for 4 cylinder, may be changed below
+
         if (configPage2.engineType == EVEN_FIRE )
         {
           channel2IgnDegrees = 180;
@@ -628,7 +638,7 @@ void initialiseAll()
           { 
             //For simultaneous, all squirts happen at the same time
             channel1InjDegrees = 0;
-            channel2InjDegrees = 0; 
+            channel2InjDegrees = 0;
           }
           else if (currentStatus.nSquirts > 2)
           {
@@ -663,6 +673,7 @@ void initialiseAll()
         channel1InjEnabled = true;
         channel2InjEnabled = true;
         break;
+
     case 5:
         channel1IgnDegrees = 0;
         channel2IgnDegrees = 72;
@@ -726,6 +737,7 @@ void initialiseAll()
         channel3InjEnabled = true;
         channel4InjEnabled = true;
         break;
+
     case 6:
         channel1IgnDegrees = 0;
         channel2IgnDegrees = 120;
@@ -788,6 +800,7 @@ void initialiseAll()
         channel2InjEnabled = true;
         channel3InjEnabled = true;
         break;
+
     case 8:
         channel1IgnDegrees = 0;
         channel2IgnDegrees = 90;
@@ -868,6 +881,7 @@ void initialiseAll()
         channel3InjEnabled = true;
         channel4InjEnabled = true;
         break;
+
     default: //Handle this better!!!
         channel1InjDegrees = 0;
         channel2InjDegrees = 180;
@@ -878,7 +892,7 @@ void initialiseAll()
     else if (CRANK_ANGLE_MAX_IGN > CRANK_ANGLE_MAX_INJ) { CRANK_ANGLE_MAX = CRANK_ANGLE_MAX_IGN; }
     else { CRANK_ANGLE_MAX = CRANK_ANGLE_MAX_INJ; }
     currentStatus.status3 = currentStatus.nSquirts << BIT_STATUS3_NSQUIRTS1; //Top 3 bits of the status3 variable are the number of squirts. This must be done after the above section due to nSquirts being forced to 1 for sequential
-    
+
     //Special case:
     //3 or 5 squirts per cycle MUST be tracked over 720 degrees. This is because the angles for them (Eg 720/3=240) are not evenly divisible into 360
     //This is ONLY the case on 4 stroke systems
@@ -886,7 +900,7 @@ void initialiseAll()
     {
       if(configPage2.strokes == FOUR_STROKE) { CRANK_ANGLE_MAX = 720; }
     }
-    
+
     switch(configPage2.injLayout)
     {
     case INJ_PAIRED:
@@ -1200,6 +1214,7 @@ void initialiseAll()
     initialisationComplete = true;
     digitalWrite(LED_BUILTIN, HIGH);
 }
+
 /** Set board / microcontroller specfic pin mappings / assignments.
  * The boardID is switch-case compared against raw boardID integers (not enum or defined label, and probably no need for that either)
  * which are originated from tuning SW (e.g. TS) set values and are avilable in reference/speeduino.ini (See pinLayout, note also that
@@ -2196,14 +2211,13 @@ void setPinMapping(byte boardID)
 
       #endif
       break;
-    
- 
+
     case 60:
         #if defined(STM32F407xx)
         //Pin definitions for experimental board Tjeerd 
         //Black F407VE wiki.stm32duino.com/index.php?title=STM32F407
         //https://github.com/Tjeerdie/SPECTRE/tree/master/SPECTRE_V0.5
-        
+
         //******************************************
         //******** PORTA CONNECTIONS *************** 
         //******************************************
@@ -2375,7 +2389,7 @@ void setPinMapping(byte boardID)
         pinFlex = PB8; // Flex sensor (Must be external interrupt enabled)
         pinTrigger = PA10; //The CAS pin
         pinTrigger2 = PA13; //The Cam Sensor pin
-      
+
     #endif
       break;
     default:
@@ -2657,7 +2671,7 @@ void setPinMapping(byte boardID)
     inj8_pin_port = portOutputRegister(digitalPinToPort(pinInjector8));
     inj8_pin_mask = digitalPinToBitMask(pinInjector8);
   }
-  
+
   if( (ignitionOutputControl == OUTPUT_CONTROL_MC33810) || (injectorOutputControl == OUTPUT_CONTROL_MC33810) )
   {
     mc33810_1_pin_port = portOutputRegister(digitalPinToPort(pinMC33810_1_CS));
@@ -2771,6 +2785,7 @@ void setPinMapping(byte boardID)
   flex_pin_mask = digitalPinToBitMask(pinFlex);
 
 }
+
 /** Initialize the chosen trigger decoder.
  * - Set Interrput numbers @ref triggerInterrupt, @ref triggerInterrupt2 and @ref triggerInterrupt3  by pin their numbers (based on board CORE_* define)
  * - Call decoder specific setup function triggerSetup_*() (by @ref config4.TrigPattern, set to one of the DECODER_* defines) and do any additional initializations needed.
