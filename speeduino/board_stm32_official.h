@@ -4,16 +4,16 @@
 #if defined(STM32_CORE_VERSION_MAJOR)
 #include <HardwareTimer.h>
 #include <HardwareSerial.h>
-#include "STM32RTC.h"
+#include <STM32RTC.h>
 
 #if defined(STM32F1)
-#include "stm32f1xx_ll_tim.h"
+#include <stm32f1xx_ll_tim.h>
 #elif defined(STM32F3)
-#include "stm32f3xx_ll_tim.h"
+#include <stm32f3xx_ll_tim.h>
 #elif defined(STM32F4)
-#include "stm32f4xx_ll_tim.h"
+#include <stm32f4xx_ll_tim.h>
 #else /*Default should be STM32F4*/
-#include "stm32f4xx_ll_tim.h"
+#include <stm32f4xx_ll_tim.h>
 #endif
 /*
 ***********************************************************************************************************
@@ -121,7 +121,7 @@ extern "C" char* sbrk(int incr);
 #endif
 
 
-#define RTC_LIB_H "STM32RTC.h"
+#define RTC_LIB_H <STM32RTC.h>
 
 /*
 ***********************************************************************************************************
@@ -323,7 +323,7 @@ void ignitionSchedule8Interrupt(HardwareTimer*);
 #if HAL_CAN_MODULE_ENABLED
 #define NATIVE_CAN_AVAILABLE
 //HardwareSerial CANSerial(PD6, PD5);
-#include <src/STM32_CAN/STM32_CAN.h>
+#include "src/STM32_CAN/STM32_CAN.h"
 //This activates CAN1 interface on STM32, but it's named as Can0, because that's how Teensy implementation is done
 extern STM32_CAN Can0;
 

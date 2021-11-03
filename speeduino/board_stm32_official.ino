@@ -4,7 +4,7 @@
 #include "auxiliaries.h"
 #include "idle.h"
 #include "scheduler.h"
-#include "HardwareTimer.h"
+#include <HardwareTimer.h>
 
 #if HAL_CAN_MODULE_ENABLED
 //This activates CAN1 interface on STM32, but it's named as Can0, because that's how Teensy implementation is done

@@ -8,7 +8,7 @@
 #ifndef _WINBONDFLASH_H__
 #define _WINBONDFLASH_H__
 
-#include <inttypes.h>
+#include <stdint.h>
 #include <SPI.h>
 #include <Arduino.h>
 #include <errno.h>

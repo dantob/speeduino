@@ -16,7 +16,7 @@
   #if defined(SRAM_AS_EEPROM)
     #define EEPROM_LIB_H "src/BackupSram/BackupSramAsEEPROM.h"
   #elif defined(FRAM_AS_EEPROM) //https://github.com/VitorBoss/FRAM
-    #define EEPROM_LIB_H <Fram.h>
+    #define EEPROM_LIB_H "src/FRAM/Fram.h"
     typedef uint16_t eeprom_address_t;
   #else
     #define EEPROM_LIB_H "src/SPIAsEEPROM/SPIAsEEPROM.h"
@@ -38,7 +38,6 @@
   #endif
 
   #if defined(FRAM_AS_EEPROM)
-    #include <Fram.h>
     #if defined(STM32F407xx)
     extern FramClass EEPROM; /*(mosi, miso, sclk, ssel, clockspeed) 31/01/2020*/
     #else

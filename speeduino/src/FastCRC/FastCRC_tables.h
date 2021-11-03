@@ -29,7 +29,7 @@
 
 #if !defined(FastCRC_tables)
 #define FastCRC_tables
-#include "inttypes.h"
+#include <stdint.h>
 
 #if defined(__AVR__) || defined(STM32_MCU_SERIES) || defined(ARDUINO_ARCH_STM32) || defined(_VARIANT_ARDUINO_STM32_) || defined(__SAMD21G18A__) || defined(__IMXRT1062__) || defined(__SAME51J19A__)
 #include <avr/pgmspace.h>

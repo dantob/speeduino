@@ -2,7 +2,7 @@
 #define SAME51_H
 #if defined(CORE_SAME51)
 
-#include "sam.h"
+#include <sam.h>
 
 /*
 ***********************************************************************************************************
@@ -33,7 +33,7 @@
     #define EEPROM_LIB_H "src/FlashStorage/FlashAsEEPROM.h"
     typedef uint16_t eeprom_address_t;
   #endif
-  #define RTC_LIB_H "TimeLib.h"
+  #define RTC_LIB_H <TimeLib.h>
   void initBoard();
   uint16_t freeRam();
   void doSystemReset();

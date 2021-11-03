@@ -4,7 +4,7 @@
 #include "auxiliaries.h"
 #include "idle.h"
 #include "scheduler.h"
-#include "HardwareTimer.h"
+#include <HardwareTimer.h>
 
   #if defined(FRAM_AS_EEPROM)
     #if defined(STM32F407xx)

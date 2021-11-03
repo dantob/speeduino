@@ -32,10 +32,10 @@
 // - Danjel McGougan (CRC-Table-Generator)
 //
 
-#include "Arduino.h"
+#include <Arduino.h>
 #if defined(KINETISK)
 
-#include "mk20dx128.h"
+#include <kinetis.h>
 #include "FastCRC.h"
 
 // ===============================================

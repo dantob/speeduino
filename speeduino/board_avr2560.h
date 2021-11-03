@@ -156,6 +156,5 @@
 * CAN / Second serial
 */
 
-
 #endif //CORE_AVR
 #endif //AVR2560_H

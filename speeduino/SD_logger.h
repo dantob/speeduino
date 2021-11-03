@@ -5,7 +5,8 @@
 
 #include <SD.h>
 //#include <SdSpiCard.h>
-#include "RingBuf.h"
+#include <RingBuf.h>
+#include <SdFat.h>
 
 
 #define SD_STATUS_OFF               0 /**< SD system is inactive. FS and file remain closed */
@@ -45,7 +46,7 @@
 
 /*
 Standard FAT16/32
-SdFs sd; 
+SdFs sd;
 FsFile logFile;
 RingBuf<FsFile, RING_BUF_CAPACITY> rb;
 */

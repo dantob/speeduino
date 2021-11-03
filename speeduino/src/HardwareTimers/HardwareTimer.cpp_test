@@ -20,7 +20,7 @@
   SOFTWARE.
 */
 
-#include "HardwareTimer.h"
+#include <HardwareTimer.h>
 
 //#include CHIP_PERIPHERAL_INCLUDE
 
