@@ -3126,7 +3126,7 @@ void initialiseTriggers(void)
       attachInterrupt(triggerInterrupt, triggerHandler, primaryTriggerEdge);
       break;
 
-    case 2:
+    case DECODER_DUAL_WHEEL:
       triggerSetup_DualWheel();
       triggerHandler = triggerPri_DualWheel;
       triggerSecondaryHandler = triggerSec_DualWheel;
@@ -3143,6 +3143,25 @@ void initialiseTriggers(void)
       attachInterrupt(triggerInterrupt, triggerHandler, primaryTriggerEdge);
       attachInterrupt(triggerInterrupt2, triggerSecondaryHandler, secondaryTriggerEdge);
       break;
+
+    case DECODER_NON360:
+      triggerSetup_non360();
+      triggerHandler = triggerPri_DualWheel; //Is identical to the dual wheel decoder, so that is used. Same goes for the secondary below
+      triggerSecondaryHandler = triggerSec_DualWheel; //Note the use of the Dual Wheel trigger function here. No point in having the same code in twice.
+      BIT_SET(decoderState, BIT_DECODER_HAS_SECONDARY);
+      getRPM = getRPM_non360;
+      getCrankAngle = getCrankAngle_non360;
+      triggerSetEndTeeth = triggerSetEndTeeth_non360;
+
+      if(configPage4.TrigEdge == 0) { primaryTriggerEdge = RISING; } // Attach the crank trigger wheel interrupt (Hall sensor drags to ground when triggering)
+      else { primaryTriggerEdge = FALLING; }
+      secondaryTriggerEdge = FALLING;
+
+      attachInterrupt(triggerInterrupt, triggerHandler, primaryTriggerEdge);
+      attachInterrupt(triggerInterrupt2, triggerSecondaryHandler, secondaryTriggerEdge);
+      break;
+
+    #ifndef DISABLE_SPECIAL_DECODERS
 
     case DECODER_GM7X:
       triggerSetup_GM7X();
@@ -3271,23 +3290,6 @@ void initialiseTriggers(void)
       getRPM = getRPM_MazdaAU;
       getCrankAngle = getCrankAngle_MazdaAU;
       triggerSetEndTeeth = triggerSetEndTeeth_MazdaAU;
-
-      if(configPage4.TrigEdge == 0) { primaryTriggerEdge = RISING; } // Attach the crank trigger wheel interrupt (Hall sensor drags to ground when triggering)
-      else { primaryTriggerEdge = FALLING; }
-      secondaryTriggerEdge = FALLING;
-
-      attachInterrupt(triggerInterrupt, triggerHandler, primaryTriggerEdge);
-      attachInterrupt(triggerInterrupt2, triggerSecondaryHandler, secondaryTriggerEdge);
-      break;
-
-    case DECODER_NON360:
-      triggerSetup_non360();
-      triggerHandler = triggerPri_DualWheel; //Is identical to the dual wheel decoder, so that is used. Same goes for the secondary below
-      triggerSecondaryHandler = triggerSec_DualWheel; //Note the use of the Dual Wheel trigger function here. No point in having the same code in twice.
-      BIT_SET(decoderState, BIT_DECODER_HAS_SECONDARY);
-      getRPM = getRPM_non360;
-      getCrankAngle = getCrankAngle_non360;
-      triggerSetEndTeeth = triggerSetEndTeeth_non360;
 
       if(configPage4.TrigEdge == 0) { primaryTriggerEdge = RISING; } // Attach the crank trigger wheel interrupt (Hall sensor drags to ground when triggering)
       else { primaryTriggerEdge = FALLING; }
@@ -3490,6 +3492,8 @@ void initialiseTriggers(void)
       
       attachInterrupt(triggerInterrupt, triggerHandler, CHANGE); //Hardcoded change, the primaryTriggerEdge will be used in the decoder to select if it`s an inverted or non-inverted signal.
       break;
+
+    #endif // DISABLE_SPECIAL_DECODERS
 
     default:
       triggerHandler = triggerPri_missingTooth;

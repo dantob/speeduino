@@ -717,8 +717,10 @@ void vvtControl(void)
       vvtTimeHold = true;
     }
 
+    #ifndef DISABLE_SPECIAL_DECODERS
     //Calculate the current cam angle for miata trigger
-    if( configPage4.TrigPattern == 9 ) { currentStatus.vvt1Angle = getCamAngle_Miata9905(); }
+    if( configPage4.TrigPattern == DECODER_MIATA_9905 ) { currentStatus.vvt1Angle = getCamAngle_Miata9905(); }
+    #endif
 
     if( (vvtIsHot == true) || ((runSecsX10 - vvtWarmTime) >= (configPage4.vvtDelay * VVT_TIME_DELAY_MULTIPLIER)) ) 
     {

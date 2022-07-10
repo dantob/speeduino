@@ -85,6 +85,15 @@ uint16_t getRPM_BasicDistributor(void);
 int getCrankAngle_BasicDistributor(void);
 void triggerSetEndTeeth_BasicDistributor(void);
 
+void triggerSetup_non360(void);
+void triggerPri_non360(void);
+void triggerSec_non360(void);
+uint16_t getRPM_non360(void);
+int getCrankAngle_non360(void);
+void triggerSetEndTeeth_non360(void);
+
+#ifndef DISABLE_SPECIAL_DECODERS
+
 void triggerSetup_GM7X(void);
 void triggerPri_GM7X(void);
 void triggerSec_GM7X(void);
@@ -141,13 +150,6 @@ void triggerSec_MazdaAU(void);
 uint16_t getRPM_MazdaAU(void);
 int getCrankAngle_MazdaAU(void);
 void triggerSetEndTeeth_MazdaAU(void);
-
-void triggerSetup_non360(void);
-void triggerPri_non360(void);
-void triggerSec_non360(void);
-uint16_t getRPM_non360(void);
-int getCrankAngle_non360(void);
-void triggerSetEndTeeth_non360(void);
 
 void triggerSetup_Nissan360(void);
 void triggerPri_Nissan360(void);
@@ -216,6 +218,15 @@ void triggerSec_NGC4(void);
 void triggerSec_NGC68(void);
 uint16_t getRPM_NGC(void);
 void triggerSetEndTeeth_NGC(void);
+
+void triggerSetup_Vmax(void);
+void triggerPri_Vmax(void);
+void triggerSec_Vmax(void);
+uint16_t getRPM_Vmax(void);
+int getCrankAngle_Vmax(void);
+void triggerSetEndTeeth_Vmax(void);
+
+#endif // DISABLE_SPECIAL_DECODERS
 
 extern void (*triggerHandler)(void); //Pointer for the trigger function (Gets pointed to the relevant decoder)
 extern void (*triggerSecondaryHandler)(void); //Pointer for the secondary trigger function (Gets pointed to the relevant decoder)
