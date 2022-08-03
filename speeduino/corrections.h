@@ -13,7 +13,7 @@ byte correctionWUE(void); //Warmup enrichment
 uint16_t correctionCranking(void); //Cranking enrichment
 byte correctionASE(void); //After Start Enrichment
 uint16_t correctionAccel(void); //Acceleration Enrichment
-byte correctionFloodClear(void); //Check for flood clear on cranking
+bool correctionFloodClear(void); //Check for flood clear on cranking
 byte correctionAFRClosedLoop(void); //Closed loop AFR adjustment
 byte correctionFlex(void); //Flex fuel adjustment
 byte correctionFuelTemp(void); //Fuel temp correction
@@ -22,7 +22,6 @@ byte correctionIATDensity(void); //Inlet temp density correction
 byte correctionBaro(void); //Barometric pressure correction
 byte correctionLaunch(void); //Launch control correction
 bool correctionDFCO(void); //Decelleration fuel cutoff
-
 
 int8_t correctionsIgn(int8_t advance);
 int8_t correctionFixedTiming(int8_t advance);

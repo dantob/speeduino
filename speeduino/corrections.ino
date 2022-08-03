@@ -89,9 +89,6 @@ uint16_t correctionsFuel(void)
     if (currentStatus.AEamount != 100) { sumCorrections = div100(sumCorrections * currentStatus.AEamount);}
   }
 
-  result = correctionFloodClear();
-  if (result != 100) { sumCorrections = div100(sumCorrections * result); }
-
   currentStatus.egoCorrection = correctionAFRClosedLoop();
   if (currentStatus.egoCorrection != 100) { sumCorrections = div100(sumCorrections * currentStatus.egoCorrection); }
 
@@ -122,50 +119,13 @@ uint16_t correctionsFuel(void)
   if (currentStatus.launchCorrection != 100) { sumCorrections = div100(sumCorrections * currentStatus.launchCorrection); }
 
   bitWrite(currentStatus.status1, BIT_STATUS1_DFCO, correctionDFCO());
-  if ( BIT_CHECK(currentStatus.status1, BIT_STATUS1_DFCO) == 1 ) { sumCorrections = 0; }
+  if ( BIT_CHECK(currentStatus.status1, BIT_STATUS1_DFCO) == 1 ) { sumCorrections = 0; } //zero fuel condition
+
+  bitWrite(currentStatus.status4, BIT_STATUS4_FLOODCLEAR, correctionFloodClear());
+  if ( BIT_CHECK(currentStatus.status4, BIT_STATUS4_FLOODCLEAR) == 1 ) { sumCorrections = 0; } //zero fuel condition
 
   if(sumCorrections > 1500) { sumCorrections = 1500; } //This is the maximum allowable increase during cranking
   return (uint16_t)sumCorrections;
-}
-
-/*
-correctionsTotal() calls all the other corrections functions and combines their results.
-This is the only function that should be called from anywhere outside the file
-*/
-static inline byte correctionsFuel_new(void)
-{
-  uint32_t sumCorrections = 100;
-  byte numCorrections = 0;
-
-  //The values returned by each of the correction functions are multiplied together and then divided back to give a single 0-255 value.
-  currentStatus.wueCorrection = correctionWUE(); numCorrections++;
-  currentStatus.ASEValue = correctionASE(); numCorrections++;
-  uint16_t correctionCrankingValue = correctionCranking(); numCorrections++;
-  currentStatus.AEamount = correctionAccel(); numCorrections++;
-  uint8_t correctionFloodClearValue = correctionFloodClear(); numCorrections++;
-  currentStatus.egoCorrection = correctionAFRClosedLoop(); numCorrections++;
-
-  currentStatus.batCorrection = correctionBatVoltage(); numCorrections++;
-  currentStatus.iatCorrection = correctionIATDensity(); numCorrections++;
-  currentStatus.baroCorrection = correctionBaro(); numCorrections++; 
-  currentStatus.flexCorrection = correctionFlex(); numCorrections++;
-  currentStatus.launchCorrection = correctionLaunch(); numCorrections++;
-
-  bitWrite(currentStatus.status1, BIT_STATUS1_DFCO, correctionDFCO());
-  if ( BIT_CHECK(currentStatus.status1, BIT_STATUS1_DFCO) == 1 ) { sumCorrections = 0; }
-
-  sumCorrections = currentStatus.wueCorrection \
-                  + currentStatus.ASEValue \
-                  + correctionCrankingValue \
-                  + currentStatus.AEamount \
-                  + correctionFloodClearValue \
-                  + currentStatus.batCorrection \
-                  + currentStatus.iatCorrection \
-                  + currentStatus.baroCorrection \
-                  + currentStatus.flexCorrection \
-                  + currentStatus.launchCorrection;
-  return (sumCorrections);
-
 }
 
 /** Warm Up Enrichment (WUE) corrections.
@@ -481,19 +441,18 @@ uint16_t correctionAccel(void)
 /** Simple check to see whether we are cranking with the TPS above the flood clear threshold.
 @return 100 (not cranking and thus no need for flood-clear) or 0 (Engine cranking and TPS above @ref config4.floodClear limit).
 */
-byte correctionFloodClear(void)
+bool correctionFloodClear(void)
 {
-  byte floodValue = 100;
   if( BIT_CHECK(currentStatus.engine, BIT_ENGINE_CRANK) )
   {
     //Engine is currently cranking, check what the TPS is
     if(currentStatus.TPS >= configPage4.floodClear)
     {
       //Engine is cranking and TPS is above threshold. Cut all fuel
-      floodValue = 0;
+      return true;
     }
   }
-  return floodValue;
+  return false;
 }
 
 /** Battery Voltage correction.
