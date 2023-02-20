@@ -171,21 +171,22 @@ static inline byte correctionsFuel_new(void)
 /** Warm Up Enrichment (WUE) corrections.
 Uses a 2D enrichment table (WUETable) where the X axis is engine temp and the Y axis is the amount of extra fuel to add
 */
-byte correctionWUE(void)
+uint8_t correctionWUE(void)
 {
-  byte WUEValue;
-  //Possibly reduce the frequency this runs at (Costs about 50 loops per second)
-  //if (currentStatus.coolant > (WUETable.axisX[9] - CALIBRATION_TEMPERATURE_OFFSET))
-  if (currentStatus.coolant > (table2D_getAxisValue(&WUETable, 9) - CALIBRATION_TEMPERATURE_OFFSET))
+  uint8_t WUEValue = 100;
+
+  /* bail out early if WUE is already complete */
+  if ( BIT_CHECK(currentStatus.engine, BIT_ENGINE_WARMUP) )
   {
-    //This prevents us doing the 2D lookup if we're already up to temp
-    BIT_CLEAR(currentStatus.engine, BIT_ENGINE_WARMUP);
-    WUEValue = table2D_getRawValue(&WUETable, 9);
-  }
-  else
-  {
-    BIT_SET(currentStatus.engine, BIT_ENGINE_WARMUP);
-    WUEValue = table2D_getValue(&WUETable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET);
+    if (currentStatus.coolant > (table2D_getAxisValue(&WUETable, 9) - CALIBRATION_TEMPERATURE_OFFSET))
+    {
+      /* WUE is complete, disable until engine restart */
+      BIT_CLEAR(currentStatus.engine, BIT_ENGINE_WARMUP);
+    }
+    else
+    {
+      WUEValue = table2D_getValue(&WUETable, currentStatus.coolant + CALIBRATION_TEMPERATURE_OFFSET);
+    }
   }
 
   return WUEValue;

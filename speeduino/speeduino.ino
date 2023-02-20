@@ -450,6 +450,7 @@ void loop(void)
           {
             BIT_CLEAR(currentStatus.engine, BIT_ENGINE_CRANK);
             if(configPage4.ignBypassEnabled > 0) { digitalWrite(pinIgnBypass, HIGH); }
+            BIT_SET(currentStatus.engine, BIT_ENGINE_WARMUP); //Enable WUE, corrections will turn it off if engine is already warm
           }
         }
         else

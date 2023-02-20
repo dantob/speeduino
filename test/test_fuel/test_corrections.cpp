@@ -26,6 +26,7 @@ void testCorrections()
 void test_corrections_WUE_active(void)
 {
   //Check for WUE being active
+  BIT_SET(currentStatus.engine, BIT_ENGINE_WARMUP);
   currentStatus.coolant = 0;
   ((uint8_t*)WUETable.axisX)[9] = 120 + CALIBRATION_TEMPERATURE_OFFSET; //Set a WUE end value of 120
   correctionWUE();
@@ -35,6 +36,7 @@ void test_corrections_WUE_active(void)
 void test_corrections_WUE_inactive(void)
 {
   //Check for WUE being inactive due to the temp being too high
+  BIT_SET(currentStatus.engine, BIT_ENGINE_WARMUP);
   currentStatus.coolant = 200;
   ((uint8_t*)WUETable.axisX)[9] = 120 + CALIBRATION_TEMPERATURE_OFFSET; //Set a WUE end value of 120
   correctionWUE();
@@ -57,6 +59,7 @@ void test_corrections_WUE_inactive_value(void)
 void test_corrections_WUE_active_value(void)
 {
   //Check for WUE being made active and returning a correct interpolated value
+  BIT_SET(currentStatus.engine, BIT_ENGINE_WARMUP);
   currentStatus.coolant = 80;
   //Set some fake values in the table axis. Target value will fall between points 6 and 7
   ((uint8_t*)WUETable.axisX)[0] = 0;
