@@ -129,6 +129,7 @@ extern "C" char* sbrk(int incr);
     extern InternalSTM32F4_EEPROM_Class EEPROM;
   #if defined(STM32F401xC)
     #define SMALL_FLASH_MODE
+    #define DISABLE_LEGACY_COMMS
   #endif
 #endif
 
